@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-data-hora
+  labels:
+    app: api-data-hora
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-data-hora
+  template:
+    metadata:
+      labels:
+        app: api-data-hora
+    spec:
+      containers:
+        - name: api-data-hora
+          image: ghcr.io/paulo9989-ai/api-data-hora:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 128Mi
